@@ -1,6 +1,6 @@
 {
     "fullname": "lib.wolkabout.iot",
-    "git_pointer": "github://wolkabout/partner-blueprints",
+    "git_pointer": "github://wolkabout/wolkabout-iot",
     "title": "WolkAbout IoT",
     "description": "Module for connecting to WolkAbout IoT Platform",
     "keywords": [
