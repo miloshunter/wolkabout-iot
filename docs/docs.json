@@ -1,18 +1,10 @@
-# This is a json file describing how to build the final doc
-# Each file you need to be parsed must be included in the "files" list.
-# Each element of the list i a tuple specifying the title of the doc page
-# and the actual file path relative to the librry root
-#
-# Json does not support comment, remove all these lines starting with "#" !
-
 {
-    "files": [
-        [
-            "MyLibrary",
-            "library.py"
-        ]
-    ],
-    "title": "My Awesome Library",
-    "version": "1.0.0"
+	"version":"1.1.0",
+	"title":"Wolk About",
+	"files":[
+		[
+			"iot",
+			"iot.py"
+		]
+	]	
 }
-

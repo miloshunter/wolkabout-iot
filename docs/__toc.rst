@@ -1,1 +1,8 @@
-This file will be auto generated
+
+    Contents:
+
+    .. toctree::
+       :maxdepth: 2
+
+       docs_iot
+
