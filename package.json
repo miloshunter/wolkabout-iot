@@ -1,13 +1,11 @@
 {
-    "fullname": "lib.namespace.libname",
-    "git_pointer": "github://zerynth/partner-blueprints",
-    "title": "My awesome library",
-    "description": "My awesome library description",
+    "fullname": "lib.wolkabout.iot",
+    "git_pointer": "github://wolkabout/partner-blueprints",
+    "title": "WolkAbout IoT",
+    "description": "Module for connecting to WolkAbout IoT Platform",
     "keywords": [
-        "temperature",
-        "sensor",
-        "I2C",
-        "whatever"
+        "WolkAbout",
+        "IoT"
     ],
     "repo": "official",
     "version": "r2.1.2"

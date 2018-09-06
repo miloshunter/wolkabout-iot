@@ -1,93 +1,102 @@
-Zerynth Partner Library Blueprints
-==================================
+# WolkConnect-Python-Zerynth
+WolkAbout Python Connector library for connecting Zerynth enabled devices to WolkAbout IoT platform.
 
-This repository contains blueprints for developing Zerynth Partner Libraries. A partner library is hosted on Github 
-in the partner account and the partner is responsible for its maintenance. 
-To create a new partner library please fork this repo and follow the instructions.
-
-
-Modify package.json
--------------------
-
-The `package.json` file contains information about the partner library.
-
-The fields requiring a change are:
-
-- *fullname*: the library identifier. It is formatted as `lib.namespace.libname` where `namespace` it is usually related to
-  the partner and `libname` is the name of the library itself. The fullname determines the import syntax of the library: 
-  `from namespace.libname import module`. It is therefore not possible for namespaces and libnames to start with numbers or to
-  contain special symbols (apart from underscore).
-- *git_pointer*: the short url where the library repo can be found. It is formatted as `github://github-account//repo`.
-  For this repo, the git_pointer would be `github://zerynth/partner-blueprint`.
-- *title*: the title of the library. It will be shown in the Zerynth package manager.
-- *description*: a longer description of the library. It will be indexed to be searched in Zerynth Studio.
-- *keywords*: a list of (max) 5 keywords that will be used to index the library in Zerynth Studio.
-- *version*: the current version of the library. Should match the current version of Zerynth.
+Supported protocol(s):
+* JsonSingleReferenceProtocol
 
 
-Adding source code
-------------------
+Example Usage
+-------------
+**Establishing connection with WolkAbout IoT platform:**
+```python
+# Insert your device credentials
+device_key = "device_key"
+device_password = "some_password"
+actuator_references = ["ACTUATOR_REFERENCE_ONE", "ACTUATOR_REFERENCE_TWO"]
 
-Python source code can be added as .py files in the main folder. For .c files it is suggested but not enforced to place 
-files under a `csrc` folder. 
+device = Wolk.Device(device_key, device_password, actuator_references)
+
+# Provide implementation of a way to read actuator status
+class ActuatorStatusProviderImpl(Wolk.ActuatorStatusProvider):
+
+    def get_actuator_status(self, reference):
+    if reference == "ACTUATOR_REFERENCE_ONE":
+        value = digitalRead(LED4)
+        if value == 1:
+            return Wolk.ACTUATOR_STATE_READY, "true"
+        else:
+            return Wolk.ACTUATOR_STATE_READY, "false"
 
 
-Preparing documentation
------------------------
+# Provide implementation of an actuation handler
+class ActuationHandlerImpl(Wolk.ActuationHandler):
 
-Under the `docs` folder the following files can be found:
+    def handle_actuation(self, reference, value):
+        if reference == "ACTUATOR_REFERENCE_ONE":
+            print("Setting actuator " + reference + " to value: " + value)
+            current_state = digitalRead(LED4)
+            if current_state == 1:
+                if value == "false":
+                    digitalWrite(LED4, LOW)
+            else:
+                if value == "true":
+                    digitalWrite(LED4, HIGH)
 
-- `docs.json`: it contains a dictionary with a list of files from which the library documentation will be extracted.
-  The Zerynth documentation is built with Sphinx. For each library, all the docstrings found in the files listed in 
-- `index.rst`: it contains the main page of the library documentation. It must end with `.. include:: __toc.rst` in
-  order to have the automatically generated table of contents appended at the end of the main page.
 
-To test the correctness of the documentation run `ztc project make_doc lib_folder_path --open`. The command will
-compile the documentation and open it on a web browser.
+# WolkConnect-PythonCore dependencies
+wolk = Wolk.Wolk(device, ActuationHandlerImpl(), ActuatorStatusProviderImpl())
 
-Adding examples
----------------
-
-Each library can contain examples of its usage. Examples are gathered together and shown in the Zerynth Studio example
-panel. Moreover they are automatically inserted in the generated documetation. Examples are very important to jump start
-the usage of the library both by experienced and unexperienced users.
-
-Examples can be added under the `examples` folder. Various subfolders can be created, one for each example. The name of
-the subfolder will be the title of the example. The subfolder can't contain spaces; if a space is needed in the title,
-please use an underscore instead (naming a subfolder `Hello_World` will produce an example named `Hello World`).
-Inside the subfolder, at least two files must be present:
-
-- `main.py`: it contains the main file of the example. Additional files can be added and can be imported by main.
-- `project.md`: a short description in markdown format of the example. It will be shown to Zerynth Studio users.
-
-Directly under the `examples` folder there must be one file: `order.txt`. In such file it will be specified where the various
-provided examples will be placed in the Zerynth example tree.
-The format of the file is quite simple: each line can begin with a certain number of `#` or without. The lines starting 
-with `#` are nodes of the example tree while the lines without `#` are the leaves and correspond to the provided examples.
-
-An `order.txt` file like this:
-
+wolk.connect()
 ```
-#Namespace
-    ##Example group 1
-        Example_1
-        Example_2
-    ##Example group 2
-        Example_2
-        Example_3
+
+**Publishing sensor readings:**
+```python
+wolk.add_sensor_reading("T", 26.93)
 ```
-will produce an example tree with a main node named `Namespace` that contains two nodes `Example group 1` and `Example group 2`,
-each one containing a list of examples. Note that an example can be placed under more than one path.
+
+**Publishing actuator statuses:**
+```python
+wolk.publish_actuator_status("ACTUATOR_REFERENCE_ONE")
+```
+This will call the `ActuatorStatusProvider` to read the actuator status and publish actuator status.
 
 
-Testing the library
--------------------
+**Publishing events:**
+```python
+wolk.add_alarm("ALARM_REFERENCE", "ALARM_MESSAGE_FROM_CONNECTOR")
+```
 
-The library repository can be easily tested by copying it under `<home>/<zerynth>/dist/<version>/libs/official/` where `<home>` is
-the home folder ( `~` in Mac and Linux, `C:\Users\your-user` in Windows), `<zerynth>` is `.zerynth2` for Mac and Linux or `zerynth2`
-for Windows, `<version>` is the Zerynth version you are testing for.
+**Data publish strategy:**
 
-Opening Zerynth Studio and clicking the Example view you should see the library examples with code ready to be cloned and tested.
+Stored sensor readings and alarms, as well as current actuator statuses are pushed to WolkAbout IoT platform on demand by calling
+```python
+wolk.publish()
+```
 
+Whereas actuator statuses are published automatically by calling:
 
+```python
+wolk.publish_actuator_status("ACTUATOR_REFERENCE_ONE")
+```
 
+**Disconnecting from the platform:**
+```python
+wolk.disconnect()
+```
+
+**Data persistence:**
+
+WolkAbout Python Connector provides a mechanism for persisting data in situations where readings can not be sent to WolkAbout IoT platform.
+
+Persisted readings are sent to WolkAbout IoT platform once connection is established.
+Data persistence mechanism used **by default** stores data in-memory.
+
+In cases when provided in-memory persistence is suboptimal, one can use custom persistence by implementing `Wolk.OutboundMessageQueue`,
+and forwarding it to the constructor in the following manner:
+
+```python
+wolk = Wolk.Wolk(device, ActuationHandlerImpl(), ActuatorStatusProviderImpl(), custom_queue)
+wolk.connect()
+```
+
+For more info on persistence mechanism see `Wolk.OutboundMessageQueue` class

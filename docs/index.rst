@@ -1,17 +1,11 @@
-==================
-My Awesome Library
-==================
+.. _lib.wolkabout.iot
 
-Here goes the documentation for the library
+**********************
+WolkAbout IoT Platform
+**********************
 
+WolkAbout IoT Platform is an IoT application enablement platform that allows users to easily and securely connect, manage, monitor and control disparate devices, transform real-time readings into meaningful data and combine different devices and services into a complete IoT solution: `WolkAbout IoT Platform <https://wolkabout.com/>`_
 
-Technical Details
-*****************
-
-Here goes any subsection of the doc
-
-
-This last line must be included! It will parse the actual documentation written in the source
-code; it will also automatically add all the provided examples.
+The Zerynth WolkAbout IoT Library can be used to ease the connection to the WolkAbout IoT Platform.
 
 .. include:: __toc.rst
