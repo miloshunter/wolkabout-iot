@@ -3,6 +3,12 @@
     "git_pointer": "github://wolkabout/wolkabout-iot",
     "title": "WolkAbout IoT",
     "description": "Module for connecting to WolkAbout IoT Platform",
+    "info": {
+        "chip_manufacturer": "-",
+        "chip_name": "-",
+        "name": "Zerynth Wolkabout IoT Library",
+        "type": "IoT Cloud"
+    },
     "keywords": [
         "WolkAbout",
         "IoT"
